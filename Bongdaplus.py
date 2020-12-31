@@ -3,10 +3,6 @@ from tkinter import ttk
 from PIL import Image, ImageTk
 from tkinter import ttk
 from tkinter import filedialog
-import glob
-import numpy as np
-import re
-import pickle
 from function import *
 np.seterr(divide='ignore', invalid='ignore')
 root = Tk()
@@ -52,64 +48,7 @@ def display_button():
     my_text.place_forget()
     tb_result.place_forget()
     query= entry1.get()
-    with open(r"D:\Github\truyvan\contents.txt", "rb") as fp: 
-        contents = pickle.load(fp)
-    with open(r"D:\Github\truyvan\vocab.txt", "rb") as fp: 
-        vocab = pickle.load(fp)
-    with open(r"D:\Github\truyvan\paths.txt", "rb") as fp: 
-        paths = pickle.load(fp)
-    with open(r"D:\Github\truyvan\TF.txt", "rb") as fp: 
-        TF = pickle.load(fp)  
-    with open(r"D:\Github\truyvan\IDF.txt", "rb") as fp: 
-        IDF = pickle.load(fp)  
-    # TF = np.load(r'D:\Github\truyvan\TF.npy')
-    # IDF = np.load(r'D:\Github\truyvan\IDF.npy')
-
-    #query='Ronaldo hét lên mừng bàn thắng của Morata'
-    #query = input()
-    #print('query: ', query)
-    requests = []
-    regex = r"([\'\"])((\\\1|.)*?)\1"
-    matches = re.finditer(regex, query, re.MULTILINE)
-    for matchNum, match in enumerate(matches, start=1):
-        for groupNum in range(0, len(match.groups())):
-            groupNum = groupNum + 1
-            if groupNum == 2:
-                requests.append(match.group(groupNum))
-    #print('Từ khóa cứng: ', requests)
-    query = query.replace('"', '')
-    qcontent = query.split()
-    qTF = calc_tf_weighting(vocab, [qcontent])
-
-    # BUOC 4: Xay dung vector TF_IDF weighting cho
-    # tap van ban va truy van
-    TF_IDF = TF*IDF
-    qTF_IDF = qTF*IDF
-    # BUOC 5: Tinh do tuong dong cua query va cac van ban
-    # su dung TF_IDF weighting
-    dists = np.linalg.norm(qTF_IDF - TF_IDF, axis=0)
-    # BUOC 6: Sap xep de sap hang va hien thi ket qua
-    rank = np.argsort(dists)
-    #print(rank)
-    topK = 5
-    count = 0
-    titles = []
-    file_names = []
-    for i in range(topK):
-        #print('Van ban gan thu ', i+1, ' la: ', ' '.join(contents[rank[i]]))
-        kt = 0
-        for request in requests:
-            if request in ' '.join(contents[rank[i]]).lower():
-                kt += 1
-        if kt == len(requests):
-            count += 1
-            #print('file paths', paths[rank[i]][-5])
-            file_names.append(paths[rank[i]][-5:])
-            f = open(paths[rank[i]], encoding="utf-8")
-            title = f.readline()
-            #print("title",title)
-            titles.append(title[:-1])
-
+    titles, file_names = search(query)
     if len(titles)==1:
         bT_result1.place(x= 50 , y = 100)
         bT_result1.config(text = titles[0])
@@ -152,65 +91,8 @@ tb_result = Label(root,width = 50,height = 3, font = "Times 14", text = "Không 
 def display_text1():
     my_text.delete("1.0",END)
     query= entry1.get()
-    with open(r"D:\Github\truyvan\contents.txt", "rb") as fp: 
-        contents = pickle.load(fp)
-    with open(r"D:\Github\truyvan\vocab.txt", "rb") as fp: 
-        vocab = pickle.load(fp)
-    with open(r"D:\Github\truyvan\paths.txt", "rb") as fp: 
-        paths = pickle.load(fp)
-    with open(r"D:\Github\truyvan\TF.txt", "rb") as fp: 
-        TF = pickle.load(fp)  
-    with open(r"D:\Github\truyvan\IDF.txt", "rb") as fp: 
-        IDF = pickle.load(fp)  
-    # TF = np.load(r'D:\Github\truyvan\TF.npy')
-    # IDF = np.load(r'D:\Github\truyvan\IDF.npy')
-
-    #query='Ronaldo hét lên mừng bàn thắng của Morata'
-    #query = input()
-    #print('query: ', query)
-    requests = []
-    regex = r"([\'\"])((\\\1|.)*?)\1"
-    matches = re.finditer(regex, query, re.MULTILINE)
-    for matchNum, match in enumerate(matches, start=1):
-        for groupNum in range(0, len(match.groups())):
-            groupNum = groupNum + 1
-            if groupNum == 2:
-                requests.append(match.group(groupNum))
-    #print('Từ khóa cứng: ', requests)
-    query = query.replace('"', '')
-    qcontent = query.split()
-    qTF = calc_tf_weighting(vocab, [qcontent])
-
-    # BUOC 4: Xay dung vector TF_IDF weighting cho
-    # tap van ban va truy van
-
-    TF_IDF = TF*IDF
-    qTF_IDF = qTF*IDF
-    # BUOC 5: Tinh do tuong dong cua query va cac van ban
-    # su dung TF_IDF weighting
-    dists = np.linalg.norm(qTF_IDF - TF_IDF, axis=0)
-    # BUOC 6: Sap xep de sap hang va hien thi ket qua
-    rank = np.argsort(dists)
-    #print(rank)
-    topK = 5
-    count = 0
-    titles = []
-    file_names = []
-    for i in range(topK):
-        #print('Van ban gan thu ', i+1, ' la: ', ' '.join(contents[rank[i]]))
-        kt = 0
-        for request in requests:
-            if request in ' '.join(contents[rank[i]]).lower():
-                kt += 1
-        if kt == len(requests):
-            count += 1
-            #print('file paths', paths[rank[i]][-5])
-            file_names.append(paths[rank[i]][-5:])
-            f = open(paths[rank[i]], encoding="utf-8")
-            title = f.readline()
-            #print("title",title)
-            titles.append(title[:-1])
-    path = "D:\\Github\\truyvan\\data\\" + file_names[0]
+    titles, file_names = search(query)
+    path = file_names[0]
     news= open(path, "r",encoding="utf8")
     a=news.read()
     my_text.insert(END,a)
@@ -221,65 +103,8 @@ def display_text1():
 def display_text2():
     my_text.delete("1.0",END)
     query= entry1.get()
-    with open(r"D:\Github\truyvan\contents.txt", "rb") as fp: 
-        contents = pickle.load(fp)
-    with open(r"D:\Github\truyvan\vocab.txt", "rb") as fp: 
-        vocab = pickle.load(fp)
-    with open(r"D:\Github\truyvan\paths.txt", "rb") as fp: 
-        paths = pickle.load(fp)
-    with open(r"D:\Github\truyvan\TF.txt", "rb") as fp: 
-        TF = pickle.load(fp)  
-    with open(r"D:\Github\truyvan\IDF.txt", "rb") as fp: 
-        IDF = pickle.load(fp)  
-    # TF = np.load(r'D:\Github\truyvan\TF.npy')
-    # IDF = np.load(r'D:\Github\truyvan\IDF.npy')
-
-    #query='Ronaldo hét lên mừng bàn thắng của Morata'
-    #query = input()
-    #print('query: ', query)
-    requests = []
-    regex = r"([\'\"])((\\\1|.)*?)\1"
-    matches = re.finditer(regex, query, re.MULTILINE)
-    for matchNum, match in enumerate(matches, start=1):
-        for groupNum in range(0, len(match.groups())):
-            groupNum = groupNum + 1
-            if groupNum == 2:
-                requests.append(match.group(groupNum))
-    #print('Từ khóa cứng: ', requests)
-    query = query.replace('"', '')
-    qcontent = query.split()
-    qTF = calc_tf_weighting(vocab, [qcontent])
-
-    # BUOC 4: Xay dung vector TF_IDF weighting cho
-    # tap van ban va truy van
-
-    TF_IDF = TF*IDF
-    qTF_IDF = qTF*IDF
-    # BUOC 5: Tinh do tuong dong cua query va cac van ban
-    # su dung TF_IDF weighting
-    dists = np.linalg.norm(qTF_IDF - TF_IDF, axis=0)
-    # BUOC 6: Sap xep de sap hang va hien thi ket qua
-    rank = np.argsort(dists)
-    #print(rank)
-    topK = 5
-    count = 0
-    titles = []
-    file_names = []
-    for i in range(topK):
-        #print('Van ban gan thu ', i+1, ' la: ', ' '.join(contents[rank[i]]))
-        kt = 0
-        for request in requests:
-            if request in ' '.join(contents[rank[i]]).lower():
-                kt += 1
-        if kt == len(requests):
-            count += 1
-            #print('file paths', paths[rank[i]][-5])
-            file_names.append(paths[rank[i]][-5:])
-            f = open(paths[rank[i]], encoding="utf-8")
-            title = f.readline()
-            #print("title",title)
-            titles.append(title[:-1])
-    path = "D:\\Github\\truyvan\\data\\" + file_names[1]
+    titles, file_names = search(query)
+    path = file_names[1]
     news= open(path, "r",encoding="utf8")
     a=news.read()
     my_text.insert(END,a)
@@ -290,65 +115,8 @@ def display_text2():
 def display_text3():
     my_text.delete("1.0",END)
     query= entry1.get()
-    with open(r"D:\Github\truyvan\contents.txt", "rb") as fp: 
-        contents = pickle.load(fp)
-    with open(r"D:\Github\truyvan\vocab.txt", "rb") as fp: 
-        vocab = pickle.load(fp)
-    with open(r"D:\Github\truyvan\paths.txt", "rb") as fp: 
-        paths = pickle.load(fp)
-    with open(r"D:\Github\truyvan\TF.txt", "rb") as fp: 
-        TF = pickle.load(fp)  
-    with open(r"D:\Github\truyvan\IDF.txt", "rb") as fp: 
-        IDF = pickle.load(fp)  
-    # TF = np.load(r'D:\Github\truyvan\TF.npy')
-    # IDF = np.load(r'D:\Github\truyvan\IDF.npy')
-
-    #query='Ronaldo hét lên mừng bàn thắng của Morata'
-    #query = input()
-    #print('query: ', query)
-    requests = []
-    regex = r"([\'\"])((\\\1|.)*?)\1"
-    matches = re.finditer(regex, query, re.MULTILINE)
-    for matchNum, match in enumerate(matches, start=1):
-        for groupNum in range(0, len(match.groups())):
-            groupNum = groupNum + 1
-            if groupNum == 2:
-                requests.append(match.group(groupNum))
-    #print('Từ khóa cứng: ', requests)
-    query = query.replace('"', '')
-    qcontent = query.split()
-    qTF = calc_tf_weighting(vocab, [qcontent])
-
-    # BUOC 4: Xay dung vector TF_IDF weighting cho
-    # tap van ban va truy van
-
-    TF_IDF = TF*IDF
-    qTF_IDF = qTF*IDF
-    # BUOC 5: Tinh do tuong dong cua query va cac van ban
-    # su dung TF_IDF weighting
-    dists = np.linalg.norm(qTF_IDF - TF_IDF, axis=0)
-    # BUOC 6: Sap xep de sap hang va hien thi ket qua
-    rank = np.argsort(dists)
-    #print(rank)
-    topK = 5
-    count = 0
-    titles = []
-    file_names = []
-    for i in range(topK):
-        #print('Van ban gan thu ', i+1, ' la: ', ' '.join(contents[rank[i]]))
-        kt = 0
-        for request in requests:
-            if request in ' '.join(contents[rank[i]]).lower():
-                kt += 1
-        if kt == len(requests):
-            count += 1
-            #print('file paths', paths[rank[i]][-5])
-            file_names.append(paths[rank[i]][-5:])
-            f = open(paths[rank[i]], encoding="utf-8")
-            title = f.readline()
-            #print("title",title)
-            titles.append(title[:-1])
-    path = "D:\\Github\\truyvan\\data\\" + file_names[2]
+    titles, file_names = search(query)
+    path = file_names[2]
     news= open(path, "r",encoding="utf8")
     a=news.read()
     my_text.insert(END,a)
@@ -359,65 +127,8 @@ def display_text3():
 def display_text4():
     my_text.delete("1.0",END)
     query= entry1.get()
-    with open(r"D:\Github\truyvan\contents.txt", "rb") as fp: 
-        contents = pickle.load(fp)
-    with open(r"D:\Github\truyvan\vocab.txt", "rb") as fp: 
-        vocab = pickle.load(fp)
-    with open(r"D:\Github\truyvan\paths.txt", "rb") as fp: 
-        paths = pickle.load(fp)
-    with open(r"D:\Github\truyvan\TF.txt", "rb") as fp: 
-        TF = pickle.load(fp)  
-    with open(r"D:\Github\truyvan\IDF.txt", "rb") as fp: 
-        IDF = pickle.load(fp)  
-    # TF = np.load(r'D:\Github\truyvan\TF.npy')
-    # IDF = np.load(r'D:\Github\truyvan\IDF.npy')
-
-    #query='Ronaldo hét lên mừng bàn thắng của Morata'
-    #query = input()
-    #print('query: ', query)
-    requests = []
-    regex = r"([\'\"])((\\\1|.)*?)\1"
-    matches = re.finditer(regex, query, re.MULTILINE)
-    for matchNum, match in enumerate(matches, start=1):
-        for groupNum in range(0, len(match.groups())):
-            groupNum = groupNum + 1
-            if groupNum == 2:
-                requests.append(match.group(groupNum))
-    #print('Từ khóa cứng: ', requests)
-    query = query.replace('"', '')
-    qcontent = query.split()
-    qTF = calc_tf_weighting(vocab, [qcontent])
-
-    # BUOC 4: Xay dung vector TF_IDF weighting cho
-    # tap van ban va truy van
-
-    TF_IDF = TF*IDF
-    qTF_IDF = qTF*IDF
-    # BUOC 5: Tinh do tuong dong cua query va cac van ban
-    # su dung TF_IDF weighting
-    dists = np.linalg.norm(qTF_IDF - TF_IDF, axis=0)
-    # BUOC 6: Sap xep de sap hang va hien thi ket qua
-    rank = np.argsort(dists)
-    #print(rank)
-    topK = 5
-    count = 0
-    titles = []
-    file_names = []
-    for i in range(topK):
-        #print('Van ban gan thu ', i+1, ' la: ', ' '.join(contents[rank[i]]))
-        kt = 0
-        for request in requests:
-            if request in ' '.join(contents[rank[i]]).lower():
-                kt += 1
-        if kt == len(requests):
-            count += 1
-            #print('file paths', paths[rank[i]][-5])
-            file_names.append(paths[rank[i]][-5:])
-            f = open(paths[rank[i]], encoding="utf-8")
-            title = f.readline()
-            #print("title",title)
-            titles.append(title[:-1])
-    path = "D:\\Github\\truyvan\\data\\" + file_names[3]
+    titles, file_names = search(query)
+    path = file_names[3]
     news= open(path, "r",encoding="utf8")
     a=news.read()
     my_text.insert(END,a)
@@ -428,65 +139,8 @@ def display_text4():
 def display_text5():
     my_text.delete("1.0",END)
     query= entry1.get()
-    with open(r"D:\Github\truyvan\contents.txt", "rb") as fp: 
-        contents = pickle.load(fp)
-    with open(r"D:\Github\truyvan\vocab.txt", "rb") as fp: 
-        vocab = pickle.load(fp)
-    with open(r"D:\Github\truyvan\paths.txt", "rb") as fp: 
-        paths = pickle.load(fp)
-    with open(r"D:\Github\truyvan\TF.txt", "rb") as fp: 
-        TF = pickle.load(fp)  
-    with open(r"D:\Github\truyvan\IDF.txt", "rb") as fp: 
-        IDF = pickle.load(fp)  
-    # TF = np.load(r'D:\Github\truyvan\TF.npy')
-    # IDF = np.load(r'D:\Github\truyvan\IDF.npy')
-
-    #query='Ronaldo hét lên mừng bàn thắng của Morata'
-    #query = input()
-    #print('query: ', query)
-    requests = []
-    regex = r"([\'\"])((\\\1|.)*?)\1"
-    matches = re.finditer(regex, query, re.MULTILINE)
-    for matchNum, match in enumerate(matches, start=1):
-        for groupNum in range(0, len(match.groups())):
-            groupNum = groupNum + 1
-            if groupNum == 2:
-                requests.append(match.group(groupNum))
-    #print('Từ khóa cứng: ', requests)
-    query = query.replace('"', '')
-    qcontent = query.split()
-    qTF = calc_tf_weighting(vocab, [qcontent])
-
-    # BUOC 4: Xay dung vector TF_IDF weighting cho
-    # tap van ban va truy van
-
-    TF_IDF = TF*IDF
-    qTF_IDF = qTF*IDF
-    # BUOC 5: Tinh do tuong dong cua query va cac van ban
-    # su dung TF_IDF weighting
-    dists = np.linalg.norm(qTF_IDF - TF_IDF, axis=0)
-    # BUOC 6: Sap xep de sap hang va hien thi ket qua
-    rank = np.argsort(dists)
-    #print(rank)
-    topK = 5
-    count = 0
-    titles = []
-    file_names = []
-    for i in range(topK):
-        #print('Van ban gan thu ', i+1, ' la: ', ' '.join(contents[rank[i]]))
-        kt = 0
-        for request in requests:
-            if request in ' '.join(contents[rank[i]]).lower():
-                kt += 1
-        if kt == len(requests):
-            count += 1
-            #print('file paths', paths[rank[i]][-5])
-            file_names.append(paths[rank[i]][-5:])
-            f = open(paths[rank[i]], encoding="utf-8")
-            title = f.readline()
-            #print("title",title)
-            titles.append(title[:-1])
-    path = "D:\\Github\\truyvan\\data\\" + file_names[4]
+    titles, file_names = search(query)
+    path = file_names[4]
     news= open(path, "r",encoding="utf8")
     a=news.read()
     my_text.insert(END,a)
