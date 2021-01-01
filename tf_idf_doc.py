@@ -1,7 +1,7 @@
 from function import *
 
 
-contents , paths, ini_contents = load_data_in_a_directory('D:\\Github\\tf_idf\\data\\*.txt')
+contents , paths, ini_contents = load_data_in_a_directory('D:\\Github\\truyvan\\data\\*.txt')
 with open('contents', 'wb') as fp:
     pickle.dump(contents, fp)
 with open('paths', 'wb') as fp:

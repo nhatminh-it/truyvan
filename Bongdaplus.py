@@ -16,7 +16,6 @@ img= Label(root,image= render)
 img.place(x=0, y= 0)
 #root.iconbitmap("icon.ico")
 
-
 def hiden_button():
     bT_result1.place_forget()
     bT_result2.place_forget()
@@ -28,7 +27,7 @@ def hiden_button():
     tb_result.place_forget()
 
 
-bT_clear = Button(root, text="Tìm Kiếm", width=8, font="Bold 10", command=hiden_button)
+bT_clear = Button(root, text="Clear", width=8, font="Bold 10", command=hiden_button)
 bT_clear.place(x=10, y=10)
 
 entry1 = Entry(root , font= "Bold 10", width= 60)
@@ -49,42 +48,42 @@ def display_button():
     my_text.place_forget()
     tb_result.place_forget()
     query= entry1.get()
-    titles, file_names = search(query)
+    titles, file_names,times = search(query)
     if len(titles)==1:
         bT_result1.place(x= 50 , y = 100)
-        bT_result1.config(text = titles[0])
+        bT_result1.config(text = titles[0] +"  -  "+times[0])
     elif len(titles)==2:
         bT_result1.place(x= 50 , y = 100)
-        bT_result1.config(text = titles[0])
+        bT_result1.config(text = titles[0] +"  -  "+times[0])
         bT_result2.place(x= 50 , y = 140 )
-        bT_result2.config(text = titles[1])
+        bT_result2.config(text = titles[1] +"  -  "+times[1])
     elif len(titles)==3:
         bT_result1.place(x= 50 , y = 100)
-        bT_result1.config(text = titles[0])
+        bT_result1.config(text = titles[0] +"  -  "+times[0])
         bT_result2.place(x= 50 , y = 140 )
-        bT_result2.config(text = titles[1])
+        bT_result2.config(text = titles[1] +"  -  "+times[1])
         bT_result3.place(x= 50 , y = 180 )
-        bT_result3.config(text = titles[2])
+        bT_result3.config(text = titles[2] +"  -  "+times[2])
     elif len(titles)==4:
         bT_result1.place(x= 50 , y = 100)
-        bT_result1.config(text = titles[0])
+        bT_result1.config(text = titles[0] +"  -  "+times[0])
         bT_result2.place(x= 50 , y = 140 )
-        bT_result2.config(text = titles[1])
+        bT_result2.config(text = titles[1] +"  -  "+times[1])
         bT_result3.place(x= 50 , y = 180 )
-        bT_result3.config(text = titles[2])
+        bT_result3.config(text = titles[2] +"  -  "+times[2])
         bT_result4.place(x= 50 , y = 220 )
-        bT_result4.config(text = titles[3])
+        bT_result4.config(text = titles[3] +"  -  "+times[3])
     elif len(titles)==5:
         bT_result1.place(x= 50 , y = 100)
-        bT_result1.config(text = titles[0])
+        bT_result1.config(text = titles[0] +"  -  "+times[0])
         bT_result2.place(x= 50 , y = 140 )
-        bT_result2.config(text = titles[1])
+        bT_result2.config(text = titles[1] +"  -  "+times[1])
         bT_result3.place(x= 50 , y = 180 )
-        bT_result3.config(text = titles[2])
+        bT_result3.config(text = titles[2] +"  -  "+times[2])
         bT_result4.place(x= 50 , y = 220 )
-        bT_result4.config(text = titles[3])
+        bT_result4.config(text = titles[3] +"  -  "+times[3])
         bT_result5.place(x= 50 , y = 260 )
-        bT_result5.config(text = titles[4])
+        bT_result5.config(text = titles[4] +"  -  "+times[4])
     else:
         tb_result.place(x= 50 , y = 100)
 
@@ -92,7 +91,7 @@ tb_result = Label(root,width = 50,height = 3, font = "Times 14", text = "Không 
 def display_text1():
     my_text.delete("1.0",END)
     query= entry1.get()
-    titles, file_names = search(query)
+    titles, file_names, times = search(query)
     path = file_names[0]
     news= open(path, "r",encoding="utf8")
     a=news.read()
@@ -104,7 +103,7 @@ def display_text1():
 def display_text2():
     my_text.delete("1.0",END)
     query= entry1.get()
-    titles, file_names = search(query)
+    titles, file_names,times = search(query)
     path = file_names[1]
     news= open(path, "r",encoding="utf8")
     a=news.read()
@@ -116,7 +115,7 @@ def display_text2():
 def display_text3():
     my_text.delete("1.0",END)
     query= entry1.get()
-    titles, file_names = search(query)
+    titles, file_names,times = search(query)
     path = file_names[2]
     news= open(path, "r",encoding="utf8")
     a=news.read()
@@ -128,7 +127,7 @@ def display_text3():
 def display_text4():
     my_text.delete("1.0",END)
     query= entry1.get()
-    titles, file_names = search(query)
+    titles, file_names,times = search(query)
     path = file_names[3]
     news= open(path, "r",encoding="utf8")
     a=news.read()
@@ -140,7 +139,7 @@ def display_text4():
 def display_text5():
     my_text.delete("1.0",END)
     query= entry1.get()
-    titles, file_names = search(query)
+    titles, file_names,times = search(query)
     path = file_names[4]
     news= open(path, "r",encoding="utf8")
     a=news.read()
@@ -155,9 +154,9 @@ def open_txt():
    a=stuff.read()
    my_text.insert(END,a)
    stuff.close()
-my_text= Text(root, width=118, height=28 )
+my_text= Text(root, width=96, height=28, font = "Calibri 14")
 #my_text.place(x=30, y= 380)
-my_text2= Text(root, width=118, height=22 )
+#my_text2= Text(root, width=118, height=22 )
 #my_text2.place(x=30, y= 750)
 
 Bt1= Button(root, text= "Search", font= "Times 10",width= 10, command= display_button)
@@ -175,7 +174,7 @@ bT_result5= Button(root,width= 80, font= "Times 12", command= display_text5)
 
 
 
-lbl3 = Label(root, text="Kết Quả", width=7)
+lbl3 = Label(root, text="Results", width=10, height = 2)
 lbl3.place(x=10, y= 60)
 
 

@@ -13,7 +13,7 @@ def remove_stopword(query):
                'lại', 'lên', 'lúc', 'mà', 'mỗi', 'một_cách', 'này', 'nên', 'nếu', 'ngay', 'nhiều', 'như', 'nhưng', 'những',
                'nơi', 'nữa', 'phải', 'qua', 'ra', 'rằng', 'rằng', 'rất', 'rất', 'rồi', 'sau', 'sẽ', 'so', 'sự', 'tại', 'theo',
                'thì', 'trên', 'trước', 'từ', 'từng', 'và', 'vẫn', 'vào', 'vậy', 'vì', 'việc', 'với', 'vừa']
-  result = []             
+  result = []
   for word in query.split():
     if word not in stop_word:
       result.append(word)
@@ -27,7 +27,7 @@ def load_data_in_a_directory(data_path):
         f = open(file_path, encoding="utf-8")
         str = f.read()
         ini_lst_contents.append(str)
-        words = re.sub(r'[?|$|.|!|<|=|,|\-|\'|\“|\”|)|(]',r' ',str.lower())
+        words = re.sub(r'[?|$|.|!|<|=|,|\-|\'|\“|\”|)|(]',r' ',str.lower()).replace('"', ' ')
         words = remove_stopword(words)
         lst_contents.append(words)
     return (lst_contents, file_paths, ini_lst_contents)
@@ -41,7 +41,7 @@ def search(query):
     with open ('ini_contents', 'rb') as fp:
         ini_contents= pickle.load(fp)
     # Khởi tạo tf_idf vecter cho docs
-    vectorizer = TfidfVectorizer(max_features = 10000)
+    vectorizer = TfidfVectorizer(max_features = 5000)
     tfidf = vectorizer.fit_transform(contents)
     # Khởi tạo tập từ khóa cứng (nếu có)
     requests = [] # Tập từ khóa cứng
@@ -52,7 +52,7 @@ def search(query):
             groupNum = groupNum + 1
             if groupNum == 2:
                 requests.append(match.group(groupNum).lower())
-    query = re.sub(r'[?|$|.|!|<|=|,|\-|\'|\“|\”|)|(]',r' ', query.lower())    
+    query = re.sub(r'[?|$|.|!|<|=|,|\-|\'|\“|\”|)|(]',r' ', query.lower()).replace('"', ' ')    
     query = remove_stopword(query)
     qcontent = query.split()
     # Tính tf_idf_query
@@ -65,6 +65,7 @@ def search(query):
     count = 0
     titles = []
     file_names = []
+    times = []
     for i in range(topK):
         kt = 0
         for request in requests:
@@ -75,12 +76,15 @@ def search(query):
             #print('file paths', paths[rank[i]][-5])
             file_names.append(paths[rank[i]])
             f = open(paths[rank[i]], encoding="utf-8")
+            time = f.readline()
             title = f.readline()
             #print("title",title)
+            times.append(time)
             titles.append(title[:-1])
     try:
+        times = times[:5]
         file_names = file_names[:5]
         titles = titles[:5]
     except:
         pass
-    return titles, file_names
+    return titles, file_names, times

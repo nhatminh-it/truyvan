@@ -1,3 +1,4 @@
+Thứ tư, 31/7/2019, 14:38 (GMT+7)
 AI dự đoán Man City vô địch Ngoại hạng Anh 2019-2020
 Trí tuệ thông minh cho rằng Liverpool vẫn không thể soán ngôi Man City, trong khi Man Utd tiếp tục đứng ngoài top 4.
 Kênh BT Sport chủ trì dự án phân tích dữ liệu từ ba nguồn lớn nhất về bóng đá là Opta, Google và Squakwa. Trí tuệ thông minh (AI) tiếp cận dữ liệu hàng nghìn trận đấu, phân tích điểm yếu và mạnh của 20 đội tham dự Ngoại hạng Anh mùa tới, các tỷ số có thể dựa trên người ghi bàn và người kiến tạo. Ngay cả những thương vụ chuyển nhượng ngẫu nhiên và chấn thương cũng được tính tới.
